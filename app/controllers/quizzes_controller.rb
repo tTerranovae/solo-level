@@ -1,7 +1,7 @@
 class QuizzesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_topic, only: [:show, :submit, :results]
-  before_action :set_quiz, only: [:show, :submit, :results]
+  before_action :set_topic, only: [ :show, :submit, :results ]
+  before_action :set_quiz, only: [ :show, :submit, :results ]
 
   def index
     @topics = Topic.all
@@ -17,18 +17,18 @@ class QuizzesController < ApplicationController
 
   def submit
     @progress = current_user.progresses.find_or_create_by(topic: @topic)
-    
+
     # Permit and get the answers from the form
     permitted_params = params.permit(answers: {}, start_times: {}, end_times: {}, time_spent: {})
     answers = permitted_params[:answers].to_h
     start_times = permitted_params[:start_times].to_h
     end_times = permitted_params[:end_times].to_h
     time_spent = permitted_params[:time_spent].to_h
-    
+
     # Calculate score
     score = 0
     total_questions = answers.size
-    
+
     # Create quiz attempt
     quiz_attempt = current_user.quiz_attempts.create!(
       topic: @topic,
@@ -36,16 +36,16 @@ class QuizzesController < ApplicationController
       total_questions: total_questions,
       completed_at: Time.current
     )
-    
+
     # Process each question
     answers.each do |question_id, user_answer|
       question = Question.find(question_id)
       is_correct = user_answer == question.correct_answer
       score += 1 if is_correct
-      
+
       # Use the time_spent parameter directly
       question_time = time_spent[question_id].to_i
-      
+
       # Create question attempt
       quiz_attempt.question_attempts.create!(
         question: question,
@@ -54,15 +54,15 @@ class QuizzesController < ApplicationController
         time_spent: question_time
       )
     end
-    
+
     # Update quiz attempt with final score
     quiz_attempt.update!(score: score)
-    
+
     # Update user's progress if they got a perfect score
     if score == total_questions
-      @progress.update!(score: [@progress.score.to_i, score].max)
+      @progress.update!(score: [ @progress.score.to_i, score ].max)
     end
-    
+
     # Return results directly
     render json: {
       success: true,
@@ -78,18 +78,18 @@ class QuizzesController < ApplicationController
 
   def results
     @results = session[:quiz_results]
-    
+
     # Always try to get the latest quiz attempt
     @latest_attempt = current_user.quiz_attempts
                                  .where(topic_id: @topic.id)
                                  .order(completed_at: :desc)
                                  .first
-    
+
     if @results.nil? && @latest_attempt.nil?
       redirect_to quiz_path(@topic), alert: "No results available. Please complete the quiz first."
       return
     end
-    
+
     # If we have session results, use those
     if @results
       @score = @results[:score]
@@ -105,17 +105,17 @@ class QuizzesController < ApplicationController
       @incorrect_answers = @total_questions - @score
       @time_taken = 0  # We don't store time taken in the database
     end
-    
+
     # Don't clear the session data until after the view is rendered
-    response.headers['X-Session-Clear'] = 'true' if @results
+    response.headers["X-Session-Clear"] = "true" if @results
   end
 
   def after_action
     super
     # Clear the session data after the response is sent
-    if response.headers['X-Session-Clear'] == 'true'
+    if response.headers["X-Session-Clear"] == "true"
       session.delete(:quiz_results)
-      response.headers.delete('X-Session-Clear')
+      response.headers.delete("X-Session-Clear")
     end
   end
 
@@ -140,12 +140,12 @@ class QuizzesController < ApplicationController
 
     # Convert difficulty string to integer
     difficulty_level = case difficulty
-      when 'beginner' then 1
-      when 'intermediate' then 2
-      when 'advanced' then 3
-      when 'expert' then 4
-      when 'master' then 5
-      else 1
+    when "beginner" then 1
+    when "intermediate" then 2
+    when "advanced" then 3
+    when "expert" then 4
+    when "master" then 5
+    else 1
     end
 
     # First try to get questions with the exact criteria
@@ -153,7 +153,7 @@ class QuizzesController < ApplicationController
       .for_user_level(current_user.level)
       .by_difficulty(difficulty_level)
       .where(question_type: question_types)
-      .order('RANDOM()')
+      .order("RANDOM()")
       .limit(5)
 
     # If we don't have enough questions, try to get any questions for this topic
@@ -161,9 +161,9 @@ class QuizzesController < ApplicationController
       remaining_count = 5 - questions.count
       additional_questions = @topic.questions
         .where.not(id: questions.pluck(:id))
-        .order('RANDOM()')
+        .order("RANDOM()")
         .limit(remaining_count)
-      
+
       questions = questions + additional_questions
     end
 
@@ -173,15 +173,15 @@ class QuizzesController < ApplicationController
 
   def update_user_progress(score, total_questions)
     progress = current_user.progresses.find_or_initialize_by(topic: @topic)
-    
+
     # Update progress with the new score if it's higher than the current score
     if progress.score.nil? || score > progress.score
       progress.score = score
     end
-    
+
     # Update last attempt time
     progress.last_attempt = Time.current
-    
+
     # Save the progress
     progress.save!
   end

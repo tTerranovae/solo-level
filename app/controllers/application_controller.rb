@@ -9,6 +9,6 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate_user!
-    redirect_to root_path, alert: 'You need to sign in first.' unless current_user
+    redirect_to root_path, alert: "You need to sign in first." unless current_user
   end
 end

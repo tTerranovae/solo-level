@@ -1,17 +1,23 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  text: MyText
-  qtype: MyString
-  options: MyText
-  correct_answer: MyString
-  explanation: MyText
+  text: What is Ruby?
+  qtype: multiple_choice
+  options: ["A programming language", "A gem", "A color", "A fruit"]
+  correct_answer: A programming language
+  explanation: Ruby is a dynamic, open source programming language
   topic: one
+  difficulty_level: 1
+  question_type: multiple_choice
+  metadata: {}
 
 two:
-  text: MyText
-  qtype: MyString
-  options: MyText
-  correct_answer: MyString
-  explanation: MyText
+  text: What is Rails?
+  qtype: multiple_choice
+  options: ["A web framework", "A train track", "A gem", "A database"]
+  correct_answer: A web framework
+  explanation: Rails is a web application framework written in Ruby
   topic: two
+  difficulty_level: 1
+  question_type: multiple_choice
+  metadata: {}

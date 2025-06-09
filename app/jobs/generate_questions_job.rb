@@ -11,17 +11,17 @@ class GenerateQuestionsJob < ApplicationJob
 
       Question.create!(
         topic: topic,
-        question: question_data['question'],
-        options: question_data['options'],
-        correct_answer: question_data['correct_answer'],
-        explanation: question_data['explanation'],
+        question: question_data["question"],
+        options: question_data["options"],
+        correct_answer: question_data["correct_answer"],
+        explanation: question_data["explanation"],
         difficulty_level: topic.difficulty_level,
         question_type: topic.question_type,
-        metadata: question_data['metadata']
+        metadata: question_data["metadata"]
       )
     end
   rescue StandardError => e
     Rails.logger.error("Failed to generate questions: #{e.message}")
     raise e
   end
-end 
+end
