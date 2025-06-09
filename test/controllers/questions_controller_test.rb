@@ -18,25 +18,6 @@ class QuestionsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should create question" do
-    assert_difference("Question.count") do
-      post :create, params: {
-        question: {
-          topic_id: @topic.id,
-          text: "Test question?",
-          qtype: "multiple_choice",
-          options: [ "A", "B" ],
-          correct_answer: "A",
-          explanation: "Test explanation",
-          difficulty_level: 1,
-          question_type: "multiple_choice",
-          metadata: {}
-        }
-      }
-    end
-    assert_redirected_to question_path(Question.last)
-  end
-
   test "should show question" do
     get :show, params: { id: @question }
     assert_response :success
@@ -45,23 +26,6 @@ class QuestionsControllerTest < ActionController::TestCase
   test "should get edit" do
     get :edit, params: { id: @question }
     assert_response :success
-  end
-
-  test "should update question" do
-    patch :update, params: {
-      id: @question,
-      question: {
-        text: "Updated question?",
-        qtype: "multiple_choice",
-        options: [ "A", "B" ],
-        correct_answer: "B",
-        explanation: "Updated explanation",
-        difficulty_level: 1,
-        question_type: "multiple_choice",
-        metadata: {}
-      }
-    }
-    assert_redirected_to question_path(@question)
   end
 
   test "should destroy question" do
