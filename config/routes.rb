@@ -17,15 +17,18 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root 'quizzes#index'
-  resources :quizzes, only: [:index, :show] do
-    post :submit, on: :member
+  root "quizzes#index"
+  resources :quizzes, only: [ :index, :show ] do
+    member do
+      post :submit
+      get :results
+    end
   end
-  resources :progress, only: [:index, :show]
-  get 'admin', to: 'admin#index'
+  resources :progress, only: [ :index, :show ]
+  get "admin", to: "admin#index"
 
-  get '/auth/github', to: redirect('/auth/github/callback')
-  get '/auth/:provider/callback', to: 'sessions#create'
-  get '/auth/failure', to: 'sessions#failure'
-  delete '/logout', to: 'sessions#destroy', as: :logout
+  get "/auth/github", to: redirect("/auth/github/callback")
+  get "/auth/:provider/callback", to: "sessions#create"
+  get "/auth/failure", to: "sessions#failure"
+  delete "/logout", to: "sessions#destroy", as: :logout
 end

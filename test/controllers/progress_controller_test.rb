@@ -1,13 +1,19 @@
 require "test_helper"
 
-class ProgressControllerTest < ActionDispatch::IntegrationTest
+class ProgressControllerTest < ActionController::TestCase
+  setup do
+    @user = users(:one)
+    @topic = topics(:one)
+    @request.session[:user_id] = @user.id
+  end
+
   test "should get index" do
-    get progress_index_url
+    get :index
     assert_response :success
   end
 
   test "should get show" do
-    get progress_show_url
+    get :show, params: { id: @topic }
     assert_response :success
   end
 end

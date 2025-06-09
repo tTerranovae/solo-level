@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -13,9 +14,8 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="icon" type="image/svg+xml" href="<%= asset_path('favicon.svg') %>">
+    <link rel="apple-touch-icon" href="<%= asset_path('apple-touch-icon.svg') %>">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
@@ -29,6 +29,10 @@
         <%= link_to root_path, class: "retro-nav-button home-button" do %>
           <span class="button-icon">🏠</span>
           <span class="button-text">HOME</span>
+        <% end %>
+        <%= link_to progress_index_path, class: "retro-nav-button" do %>
+          <span class="button-icon">📊</span>
+          <span class="button-text">PROGRESS</span>
         <% end %>
       </div>
       

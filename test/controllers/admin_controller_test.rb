@@ -1,8 +1,13 @@
 require "test_helper"
 
-class AdminControllerTest < ActionDispatch::IntegrationTest
+class AdminControllerTest < ActionController::TestCase
+  setup do
+    @user = users(:one)
+    @request.session[:user_id] = @user.id
+  end
+
   test "should get index" do
-    get admin_index_url
+    get :index
     assert_response :success
   end
 end

@@ -1,15 +1,254 @@
-<h1>Progress for <%= @progress.topic.name %></h1>
-<p>Score: <%= @progress.score %></p>
-<p>Last Attempt: <%= @progress.last_attempt %></p>
-
-<h2>Quiz Attempts</h2>
-<% @quiz_attempts.each do |attempt| %>
-  <div class="mb-4 p-4 bg-gray-100 rounded">
-    <p class="font-bold">Score: <%= attempt.score %> / <%= attempt.total_questions %></p>
-    <p class="text-sm text-gray-600">Completed at: <%= attempt.completed_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+<div class="progress-details-container">
+  <div class="progress-header">
+    <h1 class="progress-title">Progress for <%= @progress.topic.name %></h1>
+    <div class="progress-stats">
+      <div class="stat-card">
+        <span class="stat-label">HIGH SCORE</span>
+        <span class="stat-value"><%= @progress.score || 0 %></span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">ATTEMPTS</span>
+        <span class="stat-value"><%= @quiz_attempts.count %></span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">LAST ATTEMPT</span>
+        <span class="stat-value"><%= @quiz_attempts.first&.completed_at&.strftime("%Y-%m-%d") || "Never" %></span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">AVG SCORE</span>
+        <span class="stat-value">
+          <% if @quiz_attempts.any? %>
+            <%= (@quiz_attempts.sum(&:score).to_f / @quiz_attempts.count).round %>%
+          <% else %>
+            0%
+          <% end %>
+        </span>
+      </div>
+    </div>
   </div>
-<% end %>
 
-<div class="mt-4">
-  <%= link_to "Back to Topics", quizzes_path, class: "text-blue-500 hover:text-blue-700" %>
+  <div class="quiz-attempts">
+    <h2 class="section-title">QUIZ ATTEMPTS</h2>
+    <div class="table-container">
+      <table class="retro-table">
+        <thead>
+          <tr>
+            <th>DATE</th>
+            <th>SCORE</th>
+            <th>PERCENTAGE</th>
+            <th>QUESTIONS</th>
+            <th>COMPLETION TIME</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @quiz_attempts.each do |attempt| %>
+            <tr>
+              <td><%= attempt.completed_at&.strftime("%Y-%m-%d %H:%M") || "N/A" %></td>
+              <td><%= attempt.score || 0 %></td>
+              <td>
+                <% if attempt.total_questions && attempt.total_questions > 0 && attempt.score %>
+                  <%= ((attempt.score.to_f / attempt.total_questions) * 100).round %>%
+                <% else %>
+                  0%
+                <% end %>
+              </td>
+              <td><%= attempt.total_questions || 0 %></td>
+              <td>
+                <% if attempt.completed_at && attempt.created_at %>
+                  <% total_time = attempt.question_attempts.sum(&:time_spent) %>
+                  <% if total_time && total_time > 0 %>
+                    <% if total_time < 60 %>
+                      <%= total_time %> sec
+                    <% elsif total_time < 3600 %>
+                      <%= (total_time / 60.0).round(1) %> min
+                    <% else %>
+                      <%= (total_time / 3600.0).round(1) %> hours
+                    <% end %>
+                  <% else %>
+                    N/A
+                  <% end %>
+                <% else %>
+                  N/A
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="back-button">
+    <%= link_to progress_index_path, class: "retro-button" do %>
+      <span class="button-icon">←</span>
+      <span class="button-text">BACK TO TOPICS</span>
+    <% end %>
+  </div>
 </div>
+
+<style>
+.progress-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.progress-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: glow 2s infinite;
+}
+
+.progress-title {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 10px #00ff00;
+  letter-spacing: 0.2em;
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: #000;
+  border: 2px solid #00ff00;
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.quiz-attempts {
+  margin-top: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: #00ff00;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+}
+
+.retro-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #2a2a2a;
+  border: 1px solid #00ff00;
+}
+
+.retro-table th,
+.retro-table td {
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid #00ff00;
+}
+
+.retro-table th {
+  background-color: #1a1a1a;
+  color: #00ff00;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.retro-table td {
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.retro-table tr:nth-child(even) {
+  background-color: #333;
+}
+
+.retro-table tr:hover {
+  background-color: #3a3a3a;
+}
+
+.back-button {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.retro-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2a2a2a;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.retro-button:hover {
+  background-color: #00ff00;
+  color: #1a1a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.button-icon {
+  font-size: 1rem;
+}
+
+.button-text {
+  font-size: 0.9rem;
+}
+
+@keyframes glow {
+  0% { text-shadow: 0 0 10px #00ff00; }
+  50% { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
+  100% { text-shadow: 0 0 10px #00ff00; }
+}
+
+@media (max-width: 768px) {
+  .progress-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .stat-card {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .retro-table th,
+  .retro-table td {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .retro-table th {
+    font-size: 0.7rem;
+  }
+}
+</style>

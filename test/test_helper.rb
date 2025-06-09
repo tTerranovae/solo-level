@@ -13,3 +13,21 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+module ActionDispatch
+  class IntegrationTest
+    def sign_in_as(user)
+      OmniAuth.config.test_mode = true
+      OmniAuth.config.add_mock(:github, {
+        uid: user.uid,
+        info: {
+          email: user.email,
+          name: user.name
+        }
+      })
+
+      get "/auth/github/callback"
+      follow_redirect!
+    end
+  end
+end

@@ -65,6 +65,6 @@ class QuestionsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def question_params
-      params.expect(question: [ :text, :qtype, :options, :correct_answer, :explanation, :topic_id ])
+      params.require(:question).permit(:text, :qtype, :options, :correct_answer, :explanation, :topic_id, :difficulty_level, :question_type, :metadata)
     end
 end

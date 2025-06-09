@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <rect x="2" y="2" width="28" height="28" rx="4" fill="#1a1a1a"/>
+  <text x="16" y="22" font-family="'Press Start 2P'" font-size="16" fill="#00ff00" text-anchor="middle" filter="url(#glow)">S</text>
+</svg> 
