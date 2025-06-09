@@ -1,0 +1,61 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-4">Quiz Results</h1>
+      <% if @score.present? && @total_questions.present? %>
+        <div class="text-5xl font-bold text-indigo-600 mb-4">
+          <%= @score %> / <%= @total_questions %>
+        </div>
+        <p class="text-gray-600">
+          <%= (@score.to_f / @total_questions * 100).round %>% Score
+        </p>
+      <% else %>
+        <div class="text-red-600">
+          No results available
+        </div>
+      <% end %>
+    </div>
+
+    <div class="space-y-6">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">Topic:</span>
+        <span class="font-semibold"><%= @topic.name %></span>
+      </div>
+
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">Your Level:</span>
+        <span class="font-semibold"><%= current_user.level %></span>
+      </div>
+
+      <div class="flex justify-between items-center">
+        <span class="text-gray-600">High Score:</span>
+        <span class="font-semibold"><%= current_user.progresses.find_by(topic: @topic)&.score || 0 %> / <%= @total_questions || 0 %></span>
+      </div>
+    </div>
+
+    <div class="mt-8 space-y-4">
+      <%= link_to "Try Another Quiz", quizzes_path, class: "block w-full text-center bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-200" %>
+      <%= link_to "View Progress", progress_path(@topic), class: "block w-full text-center bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition duration-200" %>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Check for results in sessionStorage
+  document.addEventListener('DOMContentLoaded', function() {
+    const storedResults = sessionStorage.getItem('quiz_results');
+    if (storedResults) {
+      const results = JSON.parse(storedResults);
+      const scoreElement = document.querySelector('.text-5xl');
+      const scorePercentElement = document.querySelector('.text-gray-600');
+      
+      if (scoreElement && scorePercentElement) {
+        scoreElement.textContent = `${results.score} / ${results.total_questions}`;
+        scorePercentElement.textContent = `${Math.round((results.score / results.total_questions) * 100)}% Score`;
+      }
+      
+      // Clear the stored results
+      sessionStorage.removeItem('quiz_results');
+    }
+  });
+</script> 

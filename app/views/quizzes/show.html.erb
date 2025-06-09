@@ -1,154 +1,169 @@
 <div class="quiz-container" data-controller="quiz">
-  <div class="retro-header">
-    <h1 class="retro-title"><%= @topic.name %> Quiz</h1>
-    <div class="progress-container">
-      <div class="progress-bar" data-quiz-target="progressBar"></div>
+  <div class="quiz-header">
+    <h1 class="quiz-title"><%= @topic.name %></h1>
+    <div class="progress-bar">
+      <div class="progress" data-quiz-target="progressBar" style="width: 0%"></div>
     </div>
   </div>
 
-  <%= form_tag submit_quiz_path(@topic), method: :post, class: "quiz-form" do %>
+  <%= form_tag submit_quiz_path(@topic), method: :post, class: "quiz-form", 
+      data: { 
+        action: "submit->quiz#submitQuiz",
+        topic_id: @topic.id,
+        topic_name: @topic.name,
+        user_level: @user_level
+      } do %>
     <% @questions.each_with_index do |question, index| %>
       <div class="question-container <%= 'hidden' unless index == 0 %>" 
            data-quiz-target="question"
-           data-question-index="<%= index %>">
+           data-selected-answer=""
+           data-question-id="<%= question.id %>">
         
         <div class="question-header">
-          <h2 class="question-number">Question <%= index + 1 %> of <%= @questions.length %></h2>
-          <p class="question-text"><%= question.text %></p>
+          <span class="question-number">Question <%= index + 1 %> of <%= @questions.size %></span>
+          <span class="question-type"><%= question.question_type.titleize %></span>
+          <span class="difficulty-level"><%= question.difficulty_level.titleize %></span>
         </div>
 
-        <div class="options-container">
-          <% question.options.each do |option| %>
-            <div class="option-wrapper">
-              <input type="radio" 
-                     name="question_<%= question.id %>" 
-                     value="<%= option %>" 
-                     id="question_<%= question.id %>_<%= option %>"
-                     class="option-input"
-                     data-action="change->quiz#selectOption">
-              <label for="question_<%= question.id %>_<%= option %>" 
-                     class="option-label">
-                <%= option %>
-              </label>
+        <div class="question-content">
+          <p class="question-text"><%= question.text %></p>
+
+          <% case question.question_type %>
+          <% when 'multiple_choice' %>
+            <div class="options-container">
+              <% question.options.each do |option| %>
+                <label class="option">
+                  <%= radio_button_tag "answers[#{question.id}]", option, false,
+                      class: "option-input",
+                      data: { action: "change->quiz#selectOption" } %>
+                  <span class="option-text"><%= option %></span>
+                </label>
+              <% end %>
             </div>
+
+          <% when 'debugging' %>
+            <div class="code-container">
+              <pre><code><%= question.metadata['code_snippet'] %></code></pre>
+            </div>
+            <div class="options-container">
+              <% question.options.each do |option| %>
+                <label class="option">
+                  <%= radio_button_tag "answers[#{question.id}]", option, false,
+                      class: "option-input",
+                      data: { action: "change->quiz#selectOption" } %>
+                  <span class="option-text"><%= option %></span>
+                </label>
+              <% end %>
+            </div>
+
+          <% when 'project_based' %>
+            <div class="project-container">
+              <div class="project-description">
+                <%= question.metadata['project_description'] %>
+              </div>
+              <div class="options-container">
+                <% question.options.each do |option| %>
+                  <label class="option">
+                    <%= radio_button_tag "answers[#{question.id}]", option, false,
+                        class: "option-input",
+                        data: { action: "change->quiz#selectOption" } %>
+                    <span class="option-text"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="question-navigation">
+          <% if index > 0 %>
+            <button type="button" 
+                    class="nav-button prev-button"
+                    data-action="click->quiz#previousQuestion">
+              Previous
+            </button>
+          <% end %>
+
+          <% if index < @questions.size - 1 %>
+            <button type="button" 
+                    class="nav-button next-button"
+                    data-action="click->quiz#nextQuestion"
+                    disabled>
+              Next
+            </button>
+          <% else %>
+            <button type="submit" 
+                    class="nav-button submit-button"
+                    data-quiz-target="submitButton"
+                    disabled>
+              Submit Quiz
+            </button>
           <% end %>
         </div>
       </div>
     <% end %>
-
-    <div class="navigation-buttons">
-      <button type="button" 
-              class="retro-button prev-button" 
-              data-action="click->quiz#previousQuestion"
-              data-quiz-target="prevButton"
-              disabled>
-        Previous
-      </button>
-      
-      <button type="button" 
-              class="retro-button next-button" 
-              data-action="click->quiz#nextQuestion"
-              data-quiz-target="nextButton">
-        Next
-      </button>
-      
-      <button type="submit" 
-              class="retro-button submit-button hidden" 
-              data-quiz-target="submitButton">
-        Submit Quiz
-      </button>
-    </div>
   <% end %>
 </div>
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  background: #0a0a0a;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
 .quiz-container {
-  width: 100%;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 2rem auto;
   padding: 2rem;
-  background: #0a0a0a;
-  border: 4px solid #00ff00;
+  background: #1a1a1a;
   border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.15);
-  font-family: 'Press Start 2P', monospace;
-  color: #00ff00;
-  position: relative;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
 }
 
-.retro-header {
-  text-align: center;
+.quiz-header {
   margin-bottom: 2rem;
-  background: #000;
-  padding: 1.5rem;
-  border: 2px solid #00ff00;
-  border-radius: 4px;
+  text-align: center;
 }
 
-.retro-title {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 0 #000, 0 0 10px #00ff00;
+.quiz-title {
   color: #00ff00;
-}
-
-.progress-container {
-  width: 100%;
-  height: 20px;
-  background: #000;
-  border: 2px solid #00ff00;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
 }
 
 .progress-bar {
-  width: 0%;
+  width: 100%;
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress {
   height: 100%;
-  background: linear-gradient(90deg, #00ff00, #00cc00);
+  background: #00ff00;
   transition: width 0.3s ease;
-  box-shadow: 0 0 10px #00ff00;
 }
 
 .question-container {
   margin-bottom: 2rem;
-  background: #000;
-  padding: 1.5rem;
-  border: 2px solid #00ff00;
-  border-radius: 4px;
 }
 
 .question-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.question-content {
+  background: #222;
+  padding: 1.5rem;
+  border-radius: 8px;
   margin-bottom: 1.5rem;
 }
 
-.question-number {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: #00ff00;
-  text-shadow: 0 0 5px #00ff00;
-}
-
 .question-text {
-  font-size: 1.1rem;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  color: #00ff00;
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
 }
 
 .options-container {
@@ -157,100 +172,147 @@ body {
   gap: 1rem;
 }
 
-.option-wrapper {
-  position: relative;
+.option {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: #333;
+  border: 1px solid #444;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option:hover {
+  background: #444;
+  border-color: #00ff00;
 }
 
 .option-input {
-  position: absolute;
-  opacity: 0;
+  margin-right: 1rem;
 }
 
-.option-label {
-  display: block;
-  padding: 1rem;
-  background: #000;
-  border: 2px solid #00ff00;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-shadow: 0 0 5px #00ff00;
+.option-text {
+  color: #fff;
 }
 
-.option-label:hover {
-  background: #001100;
-  border-color: #00ff00;
-  box-shadow: 0 0 10px #00ff00;
-}
-
-.option-input:checked + .option-label {
-  background: #001100;
-  border-color: #00ff00;
-  box-shadow: 0 0 15px #00ff00;
-}
-
-.navigation-buttons {
+.question-navigation {
   display: flex;
   justify-content: space-between;
   margin-top: 2rem;
-  background: #000;
-  padding: 1rem;
-  border: 2px solid #00ff00;
-  border-radius: 4px;
 }
 
-.retro-button {
-  padding: 1rem 2rem;
-  background: #000;
-  border: 2px solid #00ff00;
-  color: #00ff00;
-  font-family: 'Press Start 2P', monospace;
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  text-shadow: 0 0 5px #00ff00;
 }
 
-.retro-button:hover:not(:disabled) {
-  background: #001100;
-  box-shadow: 0 0 15px #00ff00;
+.nav-button:hover:not(:disabled) {
+  background: #444;
 }
 
-.retro-button:disabled {
-  opacity: 0.3;
+.nav-button:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
-  border-color: #003300;
-  color: #003300;
 }
 
-.hidden {
-  display: none;
+/* Results Styles */
+.quiz-results {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
 }
 
-@keyframes glow {
-  0% { box-shadow: 0 0 5px #00ff00; }
-  50% { box-shadow: 0 0 20px #00ff00; }
-  100% { box-shadow: 0 0 5px #00ff00; }
+.quiz-results .quiz-container {
+  background: #1a1a1a;
+  width: 100%;
+  max-width: 600px;
 }
 
-.quiz-container {
-  animation: glow 2s infinite;
+.results-content {
+  padding: 2rem;
+  background: #222;
+  border-radius: 8px;
 }
 
-/* Add a subtle scanline effect */
-.quiz-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 255, 0, 0.03) 50%,
-    rgba(0, 0, 0, 0.1) 50%
-  );
-  background-size: 100% 4px;
-  pointer-events: none;
-  z-index: 1;
+.score-display {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.score-number {
+  color: #00ff00;
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.score-percentage {
+  color: #888;
+  font-size: 1.4rem;
+}
+
+.results-details {
+  margin-bottom: 2rem;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background: #333;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.result-label {
+  color: #888;
+}
+
+.result-value {
+  color: #fff;
+  font-weight: bold;
+}
+
+.results-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.action-button {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.action-button.primary {
+  background: #00ff00;
+  color: #000;
+}
+
+.action-button.primary:hover {
+  background: #00cc00;
+}
+
+.action-button.secondary {
+  background: #333;
+  color: #fff;
+}
+
+.action-button.secondary:hover {
+  background: #444;
 }
 </style>

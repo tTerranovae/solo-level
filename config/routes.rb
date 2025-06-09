@@ -19,7 +19,10 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root 'quizzes#index'
   resources :quizzes, only: [:index, :show] do
-    post :submit, on: :member
+    member do
+      post :submit
+      get :results
+    end
   end
   resources :progress, only: [:index, :show]
   get 'admin', to: 'admin#index'
