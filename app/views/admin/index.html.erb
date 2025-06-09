@@ -1,0 +1,23 @@
+<h1>Admin Dashboard</h1>
+
+<h2>Topics</h2>
+<ul>
+  <% @topics.each do |topic| %>
+    <li>
+      <strong><%= topic.name %></strong> - <%= topic.description %>
+      <%= link_to 'Edit', edit_topic_path(topic), class: 'text-blue-500 hover:underline' %>
+    </li>
+  <% end %>
+</ul>
+<%= link_to 'Add New Topic', new_topic_path, class: 'btn' %>
+
+<h2>Questions</h2>
+<ul>
+  <% @questions.each do |question| %>
+    <li>
+      <strong><%= question.text.truncate(50) %></strong> (Topic: <%= question.topic.name if question.topic %>)
+      <%= link_to 'Edit', edit_question_path(question), class: 'text-blue-500 hover:underline' %>
+    </li>
+  <% end %>
+</ul>
+<%= link_to 'Add New Question', new_question_path, class: 'btn' %>

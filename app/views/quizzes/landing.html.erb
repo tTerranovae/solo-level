@@ -1,0 +1,220 @@
+<div class="landing-container">
+  <div class="retro-header">
+    <h1 class="game-title">SOLO LEVEL</h1>
+    <div class="subtitle">AI-Powered Interactive Learning Platform</div>
+  </div>
+
+  <div class="game-description">
+    <p class="description-text">Level up your skills through interactive quizzes and challenges.</p>
+    <p class="description-text">Track your progress, earn badges, and become a coding master!</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎮</div>
+      <h3>Interactive Quizzes</h3>
+      <p>Test your knowledge with engaging challenges</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <h3>Earn Badges</h3>
+      <p>Collect achievements as you progress</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <h3>Track Progress</h3>
+      <p>Watch your skills grow over time</p>
+    </div>
+  </div>
+
+  <div class="cta-container">
+    <a href="/auth/github" class="retro-button sign-in-button">
+      <span class="button-text">START YOUR JOURNEY</span>
+      <span class="button-subtext">Sign in with GitHub</span>
+    </a>
+  </div>
+
+  <div class="pixel-decoration"></div>
+</div>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #0a0a0a;
+  font-family: 'Press Start 2P', monospace;
+  color: #00ff00;
+}
+
+.landing-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: glow 2s infinite;
+}
+
+.game-title {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px #00ff00;
+  letter-spacing: 0.2em;
+}
+
+.subtitle {
+  font-size: 1rem;
+  opacity: 0.8;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+.game-description {
+  text-align: center;
+  margin-bottom: 3rem;
+  max-width: 600px;
+}
+
+.description-text {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.feature-card {
+  background: #000;
+  border: 2px solid #00ff00;
+  padding: 1.5rem;
+  text-align: center;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #00ff00;
+}
+
+.feature-card p {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.cta-container {
+  margin-top: 2rem;
+}
+
+.sign-in-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  background: #000;
+  border: 3px solid #00ff00;
+  color: #00ff00;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sign-in-button:hover {
+  background: #001100;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+  transform: scale(1.05);
+}
+
+.button-text {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.button-subtext {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.pixel-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px) 0 0 / 20px 20px,
+    linear-gradient(0deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px) 0 0 / 20px 20px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes glow {
+  0% { text-shadow: 0 0 10px #00ff00; }
+  50% { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
+  100% { text-shadow: 0 0 10px #00ff00; }
+}
+
+/* Scanline effect */
+.landing-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 255, 0, 0.03) 50%,
+    rgba(0, 0, 0, 0.1) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .game-title {
+    font-size: 2.5rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sign-in-button {
+    padding: 1rem 2rem;
+  }
+  
+  .button-text {
+    font-size: 1rem;
+  }
+}
+</style> 

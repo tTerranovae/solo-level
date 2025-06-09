@@ -1,0 +1,47 @@
+<%= form_with(model: question, class: "contents") do |form| %>
+  <% if question.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(question.errors.count, "error") %> prohibited this question from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% question.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :text %>
+    <%= form.textarea :text, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": question.errors[:text].none?, "border-red-400 focus:outline-red-600": question.errors[:text].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :qtype %>
+    <%= form.text_field :qtype, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": question.errors[:qtype].none?, "border-red-400 focus:outline-red-600": question.errors[:qtype].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :options %>
+    <%= form.textarea :options, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": question.errors[:options].none?, "border-red-400 focus:outline-red-600": question.errors[:options].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :correct_answer %>
+    <%= form.text_field :correct_answer, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": question.errors[:correct_answer].none?, "border-red-400 focus:outline-red-600": question.errors[:correct_answer].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :explanation %>
+    <%= form.textarea :explanation, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": question.errors[:explanation].none?, "border-red-400 focus:outline-red-600": question.errors[:explanation].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :topic_id %>
+    <%= form.text_field :topic_id, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": question.errors[:topic_id].none?, "border-red-400 focus:outline-red-600": question.errors[:topic_id].any?}] %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

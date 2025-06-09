@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  topic: one
+  score: 1
+  last_attempt: 2025-06-08 19:02:53
+
+two:
+  user: two
+  topic: two
+  score: 1
+  last_attempt: 2025-06-08 19:02:53

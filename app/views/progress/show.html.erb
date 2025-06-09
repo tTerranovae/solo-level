@@ -1,0 +1,15 @@
+<h1>Progress for <%= @progress.topic.name %></h1>
+<p>Score: <%= @progress.score %></p>
+<p>Last Attempt: <%= @progress.last_attempt %></p>
+
+<h2>Quiz Attempts</h2>
+<% @quiz_attempts.each do |attempt| %>
+  <div class="mb-4 p-4 bg-gray-100 rounded">
+    <p class="font-bold">Score: <%= attempt.score %> / <%= attempt.total_questions %></p>
+    <p class="text-sm text-gray-600">Completed at: <%= attempt.completed_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+  </div>
+<% end %>
+
+<div class="mt-4">
+  <%= link_to "Back to Topics", quizzes_path, class: "text-blue-500 hover:text-blue-700" %>
+</div>

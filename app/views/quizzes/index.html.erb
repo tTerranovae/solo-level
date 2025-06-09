@@ -1,0 +1,243 @@
+<div class="topics-container">
+  <div class="topics-header">
+    <h1 class="game-title">AVAILABLE TOPICS</h1>
+    <p class="subtitle">Choose your next challenge</p>
+  </div>
+
+  <div class="topics-grid">
+    <% @topics.each do |topic| %>
+      <div class="topic-card">
+        <div class="topic-header">
+          <h2 class="topic-title"><%= topic.name %></h2>
+          <div class="topic-icon">
+            <% if topic.name.downcase.include?('python') %>
+              <svg viewBox="0 0 128 128" class="python-icon">
+                <path fill="#FFD43B" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 5.313-14.836 12.521-1.03 5.366-1.03 10.34 0 15.706 1.376 7.207 7.66 12.52 14.836 12.52h10.881V67.234c0-8.151 7.051-15.34 15.203-15.34h24.665c6.866 0 12.52-5.654 12.52-12.52V15.834c0-6.866-5.654-12.52-12.52-12.52H63.39zm-50.033 12.837c0-2.766 2.686-5.53 7.02-5.53h47.85c4.334 0 7.02 2.764 7.02 5.53v9.411H13.358V14.824z"/>
+                <path fill="#306998" d="M91.682 125.172c4.222-.02 8.252-.379 11.8-1.007 10.45-1.846 12.346-5.71 12.346-12.837v-9.411H90.135v-3.137h36.136c7.176 0 13.46-5.313 14.836-12.521 1.03-5.366 1.03-10.34 0-15.706-1.376-7.207-7.66-12.52-14.836-12.52h-10.881v19.352c0 8.151-7.051 15.34-15.203 15.34H61.708c-6.866 0-12.52 5.654-12.52 12.52v27.325c0 6.866 5.654 12.52 12.52 12.52h30.973zm50.033-12.837c0 2.766-2.686 5.53-7.02 5.53h-47.85c-4.334 0-7.02-2.764-7.02-5.53v-9.411h64.89v9.411z"/>
+              </svg>
+            <% else %>
+              📚
+            <% end %>
+          </div>
+        </div>
+        
+        <div class="topic-content">
+          <p class="topic-description"><%= topic.description %></p>
+          
+          <% if current_user %>
+            <% progress = current_user.progresses.find_by(topic: topic) %>
+            <div class="topic-stats">
+              <% if progress %>
+                <div class="stat">
+                  <span class="stat-label">HIGH SCORE</span>
+                  <span class="stat-value"><%= progress.score || 0 %>/<%= topic.questions.count %></span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">LAST ATTEMPT</span>
+                  <span class="stat-value"><%= progress.last_attempt&.strftime("%Y-%m-%d") || 'Never' %></span>
+                </div>
+              <% else %>
+                <div class="stat">
+                  <span class="stat-label">STATUS</span>
+                  <span class="stat-value new">NEW</span>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <%= link_to quiz_path(topic), class: "topic-button" do %>
+          <span class="button-text">START QUIZ</span>
+          <span class="button-icon">▶</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<style>
+.topics-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.topics-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: glow 2s infinite;
+}
+
+.game-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px #00ff00;
+  letter-spacing: 0.2em;
+}
+
+.subtitle {
+  font-size: 1rem;
+  opacity: 0.8;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.topic-card {
+  background: #000;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.topic-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.topic-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 48%, #00ff00 49%, #00ff00 51%, transparent 52%);
+  background-size: 10px 10px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.topic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #00ff00;
+}
+
+.topic-title {
+  font-size: 1.2rem;
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+.topic-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.topic-content {
+  flex-grow: 1;
+  margin-bottom: 1.5rem;
+}
+
+.topic-description {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.topic-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(0, 255, 0, 0.1);
+  border-radius: 4px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.6rem;
+  opacity: 0.8;
+  margin-bottom: 0.3rem;
+}
+
+.stat-value {
+  font-size: 0.8rem;
+  color: #00ff00;
+}
+
+.stat-value.new {
+  color: #00ff00;
+  animation: blink 1s infinite;
+}
+
+.topic-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background: #000;
+  border: 2px solid #00ff00;
+  color: #00ff00;
+  padding: 0.8rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.topic-button:hover {
+  background: #001100;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+}
+
+.button-icon {
+  font-size: 0.8rem;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@keyframes glow {
+  0% { text-shadow: 0 0 10px #00ff00; }
+  50% { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
+  100% { text-shadow: 0 0 10px #00ff00; }
+}
+
+.python-icon {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 0 2px #00ff00);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .topics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-title {
+    font-size: 2rem;
+  }
+
+  .topic-card {
+    padding: 1rem;
+  }
+}
+</style>
